@@ -1,0 +1,16 @@
+- name: Add WINE Apt signing key
+  apt_key:
+    url: https://dl.winehq.org/wine-builds/winehq.key
+    state: present
+
+- name: Add Wine repository
+  apt_repository:
+    repo: deb https://dl.winehq.org/wine-builds/debian/ bookworm main # make that 12 a DEBIAN_VERSION variable
+    state: present
+    filename: 'wine'
+
+- name: Install Wine Staging
+  apt:
+    name: winehq-staging
+    install_recommends: yes
+    update_cache: yes

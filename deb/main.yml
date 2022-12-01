@@ -1,0 +1,84 @@
+---
+- name: run the playbook tasks on the localhost
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+
+  tasks:
+  - name: Clean unwanted pre-installed packages
+    apt:
+      name:
+        - firefox-esr
+      state: absent
+
+  # - name: Install basic utilities
+  #   apt:
+  #     name:
+  #       - software-properties-common
+  #       - apt-transport-https
+  #       - gnupg2
+  #       - wget
+  #       - curl
+  #       - snapd
+
+  # - name: Install basic dev utilities
+  #   apt:
+  #     name:
+  #       - git
+  #       - vim
+  #       - tree
+  #       - htop
+
+  # - name: Install basic monitoring utilities
+  #   apt:
+  #     name:
+  #       - htop
+  
+  # - name: Install VSCode
+  #   include: tasks/vscode.yml
+
+  - name: Install Apt Packages
+    apt:
+      name:
+        - net-tools
+        # - mumble
+        - rdesktop
+        - telegram-desktop
+
+  # - name: Install firefox
+  #   snap:
+  #     name:
+  #       - firefox
+
+  # - name: Install Wine
+  #   include: tasks/wine.yml
+
+  # - name: Install Lutris
+  #   debug: Create task
+
+  - name: Install Signal
+    include: tasks/signal.yml
+
+  # - name: Install Snap Packages
+  #   snap:
+  #     name:
+  #       - cura-slicer
+  #       - discord
+  #       - moonlight
+  #       - wine64
+
+  - name: Apt cleanup
+    apt:
+      autoremove: yes
+      clean: yes
+
+  # - name: Install Tools and Utilities
+  #   apt:
+  #     name:
+  #       - signal-desktop
+  #       - sl
+  #       - teamspeak3
+  #       - tree
+  #       - vim
+  #       - vlc
+  #       - winetricks

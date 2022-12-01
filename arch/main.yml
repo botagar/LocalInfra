@@ -1,0 +1,143 @@
+---
+- name: run the playbook tasks on the localhost
+  hosts: 127.0.0.1
+  connection: local
+  become: yes
+
+  roles:
+    - kewlfft.aur
+
+  tasks:
+    #- name: Start Bootstrap
+      #command: echo 'Start Bootstrap'
+
+    #- name: Update Pacman Cache
+      #community.general.pacman:
+        #upgrade: yes
+        #update_cache: yes
+
+    - name: Install Tools and Utilities
+      community.general.pacman:
+        name:
+          - code
+          - cura
+          - discord
+          - firefox
+          - git
+          - htop
+          - inetutils
+          - iputils
+          - lutris
+          - rdesktop
+          - telegram-desktop
+          - signal-desktop
+          - snapd
+          - sl
+          - teamspeak3
+          - tree
+          - vim
+          - vlc
+          - winetricks
+          - yay # Replace with paru when supported by kewlfft.aur (https://github.com/kewlfft/ansible-aur/issues/51)
+
+    #- name: Install Development Packages
+      #community.general.pacman:
+        #name:
+          #- base-devel
+
+    #- name: Install Virtualisation Tools
+      #community.general.pacman:
+        #name:
+          #- docker
+          #- lxc
+          #- lxd
+          #- qemu 
+          #- qemu-arch-extra
+          #- virt-manager
+          #- ovmf 
+          #- bridge-utils 
+          #- dnsmasq 
+          #- vde2 
+          #- bridge-utils
+          #- openbsd-netcat 
+          #- ebtables 
+          #- iptables
+    
+    #- name: Create user for buliding AUR packages
+      #user:
+        #name: aur_builder
+        #group: wheel
+        
+    #- name: Give aur_builder user passwordless sudo for pacman commands
+      #lineinfile:
+        #path: /etc/sudoers.d/11-install-aur_builder
+        #line: 'aur_builder ALL=(ALL) NOPASSWD: /usr/bin/pacman'
+        #create: yes
+        #validate: 'visudo -cf %s'
+
+    #- name: Install AUR's
+      #become: yes
+      #become_user: aur_builder
+      #aur: 
+        #name:
+          #- bpytop
+          #- chromium
+          #- ipscan #AKA AngryIpScanner
+          #- path-of-building-community-git # Path of Exile tool
+          #- pyfa # Eve Online tool
+          #- protontricks
+          #- wokd # With Kimchi, web admin tool for kvm
+          #- kimchi
+
+    #- name: Install Snaps
+      #community.general.snap:
+        #name:
+          #- moonlight
+          #- teams-for-linux
+          #- zoom-client
+
+    #- name: Install Snaps with classic sandbox
+      #community.general.snap:
+        #classic: yes
+        #name:
+          #- slack
+
+    #- name: Enable libvirt.d service to autorun
+      #systemd:
+        #name: libvirtd
+        #enabled: yes
+        #state: started
+
+    #- name: Enable unix socks group for libvirt
+      #lineinfile:
+        #dest: /etc/libvirt/libvirtd.conf
+        #regexp: '^#\s*unix_sock_group.*$'
+        #line: 'unix_sock_group = "libvirt"'
+
+    #- name: Set unix socks permissions
+      #lineinfile:
+        #dest: /etc/libvirt/libvirtd.conf
+        #regexp: '^#\s*unix_sock_rw_perms.*$'
+        #line: 'unix_sock_rw_perms = "0770"'
+
+    #- name: Add primary user to libvert group
+      #user:
+        #name: jgeddes
+        #uid: 1000
+        #group: libvirt
+
+    #- name: Reload libvirt.d service to pickup new config
+      #systemd:
+        #name: libvirtd
+        #state: reloaded
+
+    #- name: Remove aur_builder user as it's no longer needed
+      #user:
+        #name: aur_builder
+        #state: absent
+        #remove: yes
+    
+    #- name: Remove sudoers entry for deleted aur_builder user
+      #file:
+        #path: /etc/sudoers.d/11-install-aur_builder
+        #state: absent

@@ -1,0 +1,26 @@
+- name: Add Signal Apt signing key
+  apt_key:
+    url: https://updates.signal.org/desktop/apt/keys.asc
+    state: present
+
+- name: Download gpg signing key
+  get_url:
+    url: https://updates.signal.org/desktop/apt/keys.asc
+    dest: /tmp/signal-desktop-keyring.gpg
+
+- name: De-AppArmor
+  shell: 'cat /tmp/signal-desktop-keyring.gpg | gpg --dearmor > /tmp/signal-desktop-keyring.gpg'
+  
+- name: Install Keyring  
+  shell: 'cat /tmp/signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null'
+
+- name: Add Signal repository
+  apt_repository:
+    repo: deb [arch=amd64 signed-by=/usr/share/keyrings/signal-desktop-keyring.gpg] https://updates.signal.org/desktop/apt xenial main
+    state: present
+    filename: 'signal-xenial'
+
+- name: Install Signal
+  apt:
+    name: signal-desktop
+    update_cache: yes
