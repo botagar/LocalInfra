@@ -1,3 +1,4 @@
+# Ansible facts available: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_vars_facts.html
 ---
 - name: run the playbook tasks on the localhost
   hosts: 127.0.0.1
@@ -9,63 +10,71 @@
     apt:
       name:
         - firefox-esr
+        - docker
+        - docker-engine
+        - docker.io
+        - containerd
+        - runc
       state: absent
 
-  # - name: Install basic utilities
-  #   apt:
-  #     name:
-  #       - software-properties-common
-  #       - apt-transport-https
-  #       - gnupg2
-  #       - wget
-  #       - curl
-  #       - snapd
+  - name: Install basic utilities
+    apt:
+      name:
+        - software-properties-common
+        - apt-transport-https
+        - ca-certificates
+        - lsb-release
+        - gnupg2
+        - wget
+        - curl
+        - snapd
 
-  # - name: Install basic dev utilities
-  #   apt:
-  #     name:
-  #       - git
-  #       - vim
-  #       - tree
-  #       - htop
-
-  # - name: Install basic monitoring utilities
-  #   apt:
-  #     name:
-  #       - htop
+  - name: Install basic dev utilities
+    apt:
+      name:
+        - git
+        - vim
+        - tree
+        - htop
+        - vim
   
-  # - name: Install VSCode
-  #   include: tasks/vscode.yml
+  - name: Install PipeWire (System Sound)
+    include: tasks/pipewire.yml
+  
+  - name: Install VSCode
+    include: tasks/vscode.yml
+
+  - name: Install Docker
+    include: tasks/docker.yml
 
   - name: Install Apt Packages
     apt:
       name:
         - net-tools
-        # - mumble
         - rdesktop
         - telegram-desktop
 
-  # - name: Install firefox
-  #   snap:
-  #     name:
-  #       - firefox
+  - name: Install firefox
+    snap:
+      name:
+        - firefox
 
-  # - name: Install Wine
-  #   include: tasks/wine.yml
-
-  # - name: Install Lutris
-  #   debug: Create task
+  - name: Install Wine
+    include: tasks/wine.yml
 
   - name: Install Signal
     include: tasks/signal.yml
 
-  # - name: Install Snap Packages
-  #   snap:
-  #     name:
-  #       - cura-slicer
-  #       - discord
-  #       - moonlight
-  #       - wine64
+  - name: Install Snap Packages
+    snap:
+      name:
+        - cura-slicer
+        - discord
+        - moonlight
+        - slack
+        - bpytop
+        - chromium
+        - discord
 
   - name: Apt cleanup
     apt:
@@ -75,10 +84,5 @@
   # - name: Install Tools and Utilities
   #   apt:
   #     name:
-  #       - signal-desktop
-  #       - sl
-  #       - teamspeak3
-  #       - tree
-  #       - vim
   #       - vlc
   #       - winetricks

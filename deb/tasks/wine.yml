@@ -11,6 +11,11 @@
 
 - name: Install Wine Staging
   apt:
-    name: winehq-staging
     install_recommends: yes
     update_cache: yes
+    name: 
+      - winehq-staging
+      - winetricks
+
+- name: Print prompt to run winecfg
+  command: echo 'Run winecfg to complete installation'

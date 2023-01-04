@@ -1,0 +1,50 @@
+set_fact:
+  docker_gpg_keyring_path: /etc/apt/trusted.gpg.d/docker.gpg
+
+- name: Add Docker Apt signing key
+  apt_key:
+    url: https://download.docker.com/linux/debian/gpg
+    state: present
+    keyring: {{ docker_gpg_keyring_path }}
+
+- name: Add Docker repository
+  apt_repository:
+    repo: deb [arch={{ ansible_architecture }} signed-by={{ docker_gpg_keyring_path }}] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
+    state: present
+
+- name: Install Docker packages
+  apt:
+    update_cache: yes
+    upgrade: safe
+    install_recommends: yes
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-compose-plugin
+
+- name: Ensure Docker group exists
+  group:
+    name: docker
+    state: present
+
+- name: Restart Docker Daemon
+  systemd:
+    state: restarted
+    name: docker
+
+- name: Add current user to Docker group
+  user:
+    name: {{ ansible_user_id }}
+    uid: {{ ansible_user_gid }}
+    group: docker
+
+- name: Register Docker Daemon
+  systemd:
+    enabled: yes
+    name: docker.service
+
+- name: Register Containerd Daemon
+  systemd:
+    enabled: yes
+    name: containerd.service
