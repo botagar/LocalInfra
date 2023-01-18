@@ -53,6 +53,7 @@
         - net-tools
         - rdesktop
         - telegram-desktop
+        - syncthing
 
   - name: Install firefox
     snap:
