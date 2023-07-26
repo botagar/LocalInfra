@@ -1,64 +1,98 @@
 # Ansible facts available: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_vars_facts.html
----
 - name: run the playbook tasks on the localhost
   hosts: 127.0.0.1
   connection: local
   become: yes
 
   tasks:
+  - name: Debug Diagnostics
+    debug:
+      msg: "Running as {{ ansible_facts.user_id }}. Started by user {{ ansible_env.SUDO_USER }}({{ ansible_env.SUDO_UID }})."
+
   - name: Clean unwanted pre-installed packages
     apt:
       name:
-        - firefox-esr
-        - docker
-        - docker-engine
-        - docker.io
-        - containerd
-        - runc
+      - firefox-esr
+      - docker
+      - docker-engine
+      - docker.io
+      - containerd
+      - runc
       state: absent
 
-  - name: Install basic utilities
+  - name: Install base utilities
     apt:
       name:
-        - software-properties-common
-        - apt-transport-https
-        - ca-certificates
-        - lsb-release
-        - gnupg2
-        - wget
-        - curl
-        - snapd
+      - software-properties-common
+      - apt-transport-https
+      - ca-certificates
+      - lsb-release
+      - gnupg2
+      - wget
+      - curl
+      - snapd
+      state: latest
 
   - name: Install basic dev utilities
     apt:
       name:
-        - git
-        - vim
-        - tree
-        - htop
-        - vim
+      - git
+      - vim
+      - tree
+      - htop
+      - vim
+      state: latest
+
+  - name: Setup dev libraries
+    include: tasks/local_dev_libs.yml
+    vars:
+      state_local_dev_libs: latest
+
+  - name: Install Brew
+    include: tasks/brew.yml
+    vars:
+      state_brew: present
+
+  - name: Install PyEnv
+    become_user: "{{ ansible_env.SUDO_USER }}"
+    import_role:
+      name: staticdev.pyenv
+    vars:
+      pyenv_env: 'system'
+      pyenv_global:
+      - "3.11"
+      pyenv_python_versions:
+      - "3.11"
+      - "3.7"
+      pyenv_enable_autocompletion: true
   
+  - name: Install AWS CLI
+    include: tasks/aws_cli.yml
+    vars:
+      state_aws_cli: present
+
   - name: Install PipeWire (System Sound)
     include: tasks/pipewire.yml
-  
+
   - name: Install VSCode
     include: tasks/vscode.yml
 
   - name: Install Docker
     include: tasks/docker.yml
 
-  - name: Install Apt Packages
+  - name: Install Apt packages
     apt:
       name:
-        - net-tools
-        - rdesktop
-        - telegram-desktop
-        - syncthing
+      - net-tools
+      - rdesktop
+      - telegram-desktop
+      - syncthing
+      - deluge
 
   - name: Install firefox
     snap:
       name:
-        - firefox
+      - firefox
 
   - name: Install Wine
     include: tasks/wine.yml
@@ -66,21 +100,21 @@
   - name: Install Signal
     include: tasks/signal.yml
 
-  - name: Install Snap Packages
+  - name: Install Snap packages
     snap:
       name:
-        - cura-slicer
-        - discord
-        - moonlight
-        - slack
-        - bpytop
-        - chromium
-        - discord
+      - cura-slicer
+      - discord
+      - moonlight
+      - slack
+      - bpytop
+      - chromium
+      - discord
 
   - name: Apt cleanup
     apt:
       autoremove: yes
-      clean: yes
+      autoclean: yes
 
   # - name: Install Tools and Utilities
   #   apt:

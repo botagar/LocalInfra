@@ -3,8 +3,8 @@
 - name: Install PipeWire
   apt:
     name:
-      - pipewire 
-      - pipewire-audio-client-libraries
+    - pipewire
+    - pipewire-audio-client-libraries
 
 - name: Create Pipewire session file
   file:
@@ -49,5 +49,5 @@
     state: started
     name: pipewire-pulse
 
-  - name: Check if PipeWire is now properly active
-    command: pactl info | grep PipeWire
+- name: Check if PipeWire is now properly active
+  command: pactl info | grep PipeWire

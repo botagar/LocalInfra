@@ -1,0 +1,24 @@
+- name: Create temp AWS CLI extraction directory
+  file:
+    path: /tmp/awscliv2
+    state: directory
+    mode: 0775
+    recurse: yes
+
+- name: Download and extract AWS CLI package
+  unarchive:
+    src: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+    dest: /tmp/awscliv2
+    mode: 0755
+    remote_src: yes
+  when: state_aws_cli == "present"
+
+- name: Install AWS CLI
+  shell: ./install
+  args:
+    chdir: /tmp/awscliv2/aws/
+  when: state_aws_cli == "present"
+
+- name: Verify installation
+  command: aws --version
+  when: state_aws_cli == "present"

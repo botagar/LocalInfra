@@ -1,0 +1,14 @@
+- name: Download Brew install script
+  become_user: "{{ ansible_env.SUDO_USER }}"
+  get_url:
+    url: https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh
+    dest: /tmp/install_brew.sh
+    mode: 0755
+  when: state_brew == "present"
+
+- name: Install Brew
+  become_user: "{{ ansible_env.SUDO_USER }}"
+  shell: ./install_brew.sh
+  args:
+    chdir: /tmp/
+  when: state_brew == "present"

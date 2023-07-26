@@ -1,0 +1,32 @@
+- name: Setup General Build Environment
+  apt:
+    install_recommends: yes
+    update_cache: yes
+    name:
+    - make
+    - cmake
+    - less
+    - build-essential
+    - glibc
+    - groff
+    state: "{{ state_local_dev_libs | default('present', true) }}"
+
+- name: Setup PyEnv Build Environment
+  apt:
+    install_recommends: yes
+    update_cache: yes
+    name:
+    - libssl-dev
+    - zlib1g-dev
+    - libbz2-dev
+    - libreadline-dev
+    - libsqlite3-dev
+    - llvm
+    - libncursesw5-dev
+    - xz-utils
+    - tk-dev
+    - libxml2-dev
+    - libxmlsec1-dev
+    - libffi-dev
+    - liblzma-dev
+    state: "{{ state_local_dev_libs | default('present', true) }}"
