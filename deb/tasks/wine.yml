@@ -5,7 +5,7 @@
 
 - name: Add Wine repository
   apt_repository:
-    repo: deb https://dl.winehq.org/wine-builds/debian/ bookworm main # make that 12 a DEBIAN_VERSION variable
+    repo: deb https://dl.winehq.org/wine-builds/ubuntu/ jammy main # make that 12 a DEBIAN_VERSION variable
     state: present
     filename: 'wine'
 

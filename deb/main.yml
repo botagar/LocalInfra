@@ -77,8 +77,9 @@
   - name: Install VSCode
     include: tasks/vscode.yml
 
-  - name: Install Docker
-    include: tasks/docker.yml
+  # - name: Install Docker
+  #   include: tasks/docker.yml
+  # Try Podman Instead (podman-docker)
 
   - name: Install Apt packages
     apt:
@@ -88,6 +89,7 @@
       - telegram-desktop
       - syncthing
       - deluge
+      - deluge-web
 
   - name: Install firefox
     snap:
@@ -109,15 +111,8 @@
       - slack
       - bpytop
       - chromium
-      - discord
 
   - name: Apt cleanup
     apt:
       autoremove: yes
       autoclean: yes
-
-  # - name: Install Tools and Utilities
-  #   apt:
-  #     name:
-  #       - vlc
-  #       - winetricks
