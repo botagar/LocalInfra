@@ -1,24 +1,46 @@
 # https://trendoceans.com/install-pipewire-on-debian-11/
+- name: Clean Depricated PipeWire Modules
+  apt:
+    name:
+    - pipewire-media-session
+    - pulseaudio-module-bluetooth
+    state: absent
 
 - name: Install PipeWire
   apt:
     name:
     - pipewire
     - pipewire-audio-client-libraries
+    - libldacbt-abr2
+    - libldacbt-enc2
+    - gstreamer1.0-pipewire
+    - libpipewire-0.3-0
+    - libpipewire-0.3-dev
+    - libpipewire-0.3-modules
+    - libspa-0.2-bluetooth
+    - libspa-0.2-dev
+    - libspa-0.2-jack
+    - libspa-0.2-modules
+    - wireplumber
+    - gir1.2-wp-0.4
+    - libwireplumber-0.4-0
+    - libwireplumber-0.4-dev
 
 - name: Create Pipewire session file
   file:
     path: /etc/pipewire/media-session.d/with-pulseaudio
-    owner: 1000
-    group: 1000
+    owner: jgeddes
+    group: jgeddes
     mode: '0644'
+    state: directory
 
 - name: Copy Pipewire Pulse Service Files
   copy:
-    src: /usr/share/doc/pipewire/examples/systemd/user/pipewire-pulse.*
-    dest: /etc/systemd/user/
+    src: /usr/share/doc/pipewire/examples/alsa.conf.d/99-pipewire-default.conf
+    dest: /etc/alsa/conf.d/
 
 - name: Stop and Deregister PulseAudio Service
+  become_user: "{{ ansible_env.SUDO_USER }}"
   systemd:
     enabled: no
     scope: user
@@ -27,6 +49,7 @@
     name: pulseaudio.service
 
 - name: Stop and Deregister PulseAudio Socket
+  become_user: "{{ ansible_env.SUDO_USER }}"
   systemd:
     enabled: no
     scope: user
@@ -34,14 +57,16 @@
     name: pulseaudio.socket
 
 - name: Start and Register Pipewire Service
+  become_user: "{{ ansible_env.SUDO_USER }}"
   systemd:
     daemon_reload: yes
     enabled: yes
     scope: user
     state: started
-    name: pipewire
+    name: pipewire.service
 
 - name: Start and Register Pipewire-Pulse Service
+  become_user: "{{ ansible_env.SUDO_USER }}"
   systemd:
     daemon_reload: yes
     enabled: yes
@@ -49,5 +74,15 @@
     state: started
     name: pipewire-pulse
 
+- name: Start and Register Wireplumber
+  become_user: "{{ ansible_env.SUDO_USER }}"
+  systemd:
+    daemon_reload: yes
+    enabled: yes
+    scope: user
+    state: started
+    name: wireplumber
+
 - name: Check if PipeWire is now properly active
+  become_user: "{{ ansible_env.SUDO_USER }}"
   command: pactl info | grep PipeWire

@@ -7,7 +7,6 @@
     - cmake
     - less
     - build-essential
-    - glibc
     - groff
     state: "{{ state_local_dev_libs | default('present', true) }}"
 

@@ -6,10 +6,10 @@
 - name: Download gpg signing key
   get_url:
     url: https://updates.signal.org/desktop/apt/keys.asc
-    dest: /tmp/signal-desktop-keyring.gpg
+    dest: /tmp/signal-desktop-keyring-armored.gpg
 
 - name: De-AppArmor
-  shell: 'cat /tmp/signal-desktop-keyring.gpg | gpg --dearmor > /tmp/signal-desktop-keyring.gpg'
+  shell: 'cat /tmp/signal-desktop-keyring-armored.gpg | gpg --dearmor > /tmp/signal-desktop-keyring.gpg'
   
 - name: Install Keyring  
   shell: 'cat /tmp/signal-desktop-keyring.gpg | sudo tee /usr/share/keyrings/signal-desktop-keyring.gpg > /dev/null'

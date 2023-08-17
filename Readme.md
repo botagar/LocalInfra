@@ -6,4 +6,3 @@ To add:
 * Razer Commander for Linux or OpenRazer
 * Obsidian
 * OBS
-* Steam

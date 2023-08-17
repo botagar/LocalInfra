@@ -20,6 +20,14 @@
       - runc
       state: absent
 
+  - name: Enable universe repository
+    apt_repository:
+      repo: "{{ item }}"
+    loop:
+      - "deb http://archive.ubuntu.com/ubuntu/ jammy universe"
+      - "deb http://archive.ubuntu.com/ubuntu/ jammy-updates universe"
+      - "deb http://security.ubuntu.com/ubuntu/ jammy-security universe"
+
   - name: Install base utilities
     apt:
       name:
@@ -54,7 +62,7 @@
       state_brew: present
 
   - name: Install PyEnv
-    become_user: "{{ ansible_env.SUDO_USER }}"
+    #become_user: "{{ ansible_env.SUDO_USER }}"
     import_role:
       name: staticdev.pyenv
     vars:
@@ -66,6 +74,7 @@
       - "3.7"
       pyenv_enable_autocompletion: true
   
+  # NOT idempotent
   - name: Install AWS CLI
     include: tasks/aws_cli.yml
     vars:
@@ -77,19 +86,21 @@
   - name: Install VSCode
     include: tasks/vscode.yml
 
-  # - name: Install Docker
-  #   include: tasks/docker.yml
-  # Try Podman Instead (podman-docker)
+   #- name: Install Docker
+     #include: tasks/docker.yml
+   # Try Podman Instead (podman-docker)
 
   - name: Install Apt packages
     apt:
       name:
+      - nala # Faster Apt Package Manager
       - net-tools
       - rdesktop
       - telegram-desktop
       - syncthing
       - deluge
       - deluge-web
+      - timeshift # Disk Backup and Restore
 
   - name: Install firefox
     snap:
@@ -111,6 +122,11 @@
       - slack
       - bpytop
       - chromium
+
+  - name: Install Universe packages
+    apt:
+      name:
+      - steam
 
   - name: Apt cleanup
     apt:
