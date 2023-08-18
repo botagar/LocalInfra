@@ -1,0 +1,16 @@
+- name: Add OpenRazer PPA
+  apt_repository:
+    repo: ppa:openrazer/stable
+
+- name: Install OpenRazer
+  apt:
+    update_cache: yes
+    name:
+    - openrazer-meta
+    state: latest
+
+- name: Add main user to plugdev group
+  user:
+    name: "{{ ansible_env.SUDO_USER }}"
+    groups: plugdev
+    append: yes

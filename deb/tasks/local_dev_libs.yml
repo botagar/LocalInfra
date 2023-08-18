@@ -28,4 +28,5 @@
     - libxmlsec1-dev
     - libffi-dev
     - liblzma-dev
+    - libhidapi-libusb0
     state: "{{ state_local_dev_libs | default('present', true) }}"

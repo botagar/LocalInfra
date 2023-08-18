@@ -122,7 +122,7 @@
 
     #- name: Add primary user to libvert group
       #user:
-        #name: jgeddes
+        #name: "{{ ansible_env.SUDO_USER }}"
         #uid: 1000
         #group: libvirt
 

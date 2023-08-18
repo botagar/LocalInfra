@@ -61,8 +61,8 @@
     vars:
       state_brew: present
 
+  # NOT idempotent
   - name: Install PyEnv
-    #become_user: "{{ ansible_env.SUDO_USER }}"
     import_role:
       name: staticdev.pyenv
     vars:
@@ -80,6 +80,12 @@
     vars:
       state_aws_cli: present
 
+  - name: Install aws-vault credentials CLI utility
+    become_user: "{{ ansible_env.SUDO_USER }}"
+    community.general.homebrew:
+      name: aws-vault
+      state: present
+
   - name: Install PipeWire (System Sound)
     include: tasks/pipewire.yml
 
@@ -89,6 +95,19 @@
    #- name: Install Docker
      #include: tasks/docker.yml
    # Try Podman Instead (podman-docker)
+  - name: Install Podman
+    apt:
+      name:
+      - podman
+      - podman-docker
+
+  - name: Install Podman Compose
+    become_user: "{{ ansible_env.SUDO_USER }}"
+    pip:
+      name: podman-compose
+
+  - name: Install NVM
+    include: tasks/nvm.yml
 
   - name: Install Apt packages
     apt:
@@ -127,6 +146,26 @@
     apt:
       name:
       - steam
+ 
+  - name: Install Streamdeck UI
+    include: tasks/streamdeck.yml
+
+  - name: Download and Install Portmaster .deb
+    apt:
+      deb: https://updates.safing.io/latest/linux_amd64/packages/portmaster-installer.deb
+  
+  - name: Install Private Internet Access VPN
+    include: tasks/private_internet_access.yml
+
+  - name: Download and Install Obsidian .deb
+    apt:
+      deb: https://github.com/obsidianmd/obsidian-releases/releases/download/v1.3.7/obsidian_1.3.7_amd64.deb
+  
+  - name: Install OpenRazer
+    include: tasks/openrazer.yml
+
+  - name: Install OBS
+    include: tasks/obs.yml
 
   - name: Apt cleanup
     apt:

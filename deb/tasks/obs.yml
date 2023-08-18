@@ -1,0 +1,11 @@
+- name: Add OBS PPA
+  apt_repository:
+    repo: ppa:obsproject/obs-studio
+
+- name: Install OpenRazer
+  apt:
+    update_cache: yes
+    name:
+    - ffmpeg
+    - obs-studio
+    state: latest

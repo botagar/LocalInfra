@@ -29,8 +29,8 @@
 - name: Create Pipewire session file
   file:
     path: /etc/pipewire/media-session.d/with-pulseaudio
-    owner: jgeddes
-    group: jgeddes
+    owner: "{{ ansible_env.SUDO_USER }}"
+    group: "{{ ansible_env.SUDO_USER }}"
     mode: '0644'
     state: directory
 

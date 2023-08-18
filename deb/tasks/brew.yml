@@ -10,5 +10,13 @@
   become_user: "{{ ansible_env.SUDO_USER }}"
   shell: ./install_brew.sh
   args:
+    executable: /bin/bash
     chdir: /tmp/
   when: state_brew == "present"
+
+- name: Setup user profile
+  shell: |
+    (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/{{ ansible_env.SUDO_USER }}/.profile
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+  args:
+    executable: /bin/bash

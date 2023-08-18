@@ -1,0 +1,24 @@
+- name: Download NVM install script
+  become_user: "{{ ansible_env.SUDO_USER }}"
+  get_url:
+    url: https://raw.githubusercontent.com/creationix/nvm/master/install.sh
+    dest: /tmp/nvm_install.sh
+    mode: 0755
+
+- name: Install NVM
+  become_user: "{{ ansible_env.SUDO_USER }}"
+  shell: ./nvm_install.sh
+  args:
+    executable: /bin/bash
+    chdir: /tmp/
+    creates: "/home/{{ ansible_env.SUDO_USER }}/.nvm/nvm.sh"
+
+- name: Install Node 16
+  become_user: "{{ ansible_env.SUDO_USER }}"
+  shell: |
+    . /home/{{ ansible_env.SUDO_USER }}/.nvm/nvm.sh
+    nvm install 16
+    nvm use 16
+  args:
+    executable: /bin/bash
+    chdir: "/home/{{ ansible_env.SUDO_USER }}"

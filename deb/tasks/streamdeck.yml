@@ -1,0 +1,6 @@
+- name: Configure Elgato USB Devices
+  command: sh -c 'echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"0fd9\", TAG+=\"uaccess\"" > /etc/udev/rules.d/70-streamdeck.rules'
+
+- name: Install Streamdeck UI
+  become_user: "{{ ansible_env.SUDO_USER }}"
+  command: python3 -m pip install streamdeck-ui --user

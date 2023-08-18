@@ -1,0 +1,12 @@
+- name: Download PIA Installer
+  get_url:
+    url: https://installers.privateinternetaccess.com/download/pia-linux-3.3.1-06924.run
+    dest: /tmp/pia-linux-3.3.1-06924.run
+    mode: 0755
+
+# Needs to be run manually as it requires prompts
+# - name: Install PIA
+#   become_user: "{{ ansible_env.SUDO_USER }}"
+#   shell: ./pia-linux-3.3.1-06924.run
+#   args:
+#     chdir: /tmp/
