@@ -17,5 +17,14 @@
       - winehq-staging
       - winetricks
 
+- name: Install WINE Utility Libraries
+  apt:
+    install_recommends: yes
+    name:
+      - winbind
+
 - name: Print prompt to run winecfg
   command: echo 'Run winecfg to complete installation'
+
+- name: Print prompt for installing extra tooling inside WINE
+  command: echo 'Run winetricks dxvk'

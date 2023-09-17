@@ -1,0 +1,10 @@
+- name: Add AppImageLauncher PPA
+  apt_repository:
+    repo: ppa:appimagelauncher-team/stable
+
+- name: Install AppImageLauncher
+  apt:
+    update_cache: yes
+    name:
+    - appimagelauncher
+    state: latest

@@ -7,7 +7,11 @@
   tasks:
   - name: Debug Diagnostics
     debug:
-      msg: "Running as {{ ansible_facts.user_id }}. Started by user {{ ansible_env.SUDO_USER }}({{ ansible_env.SUDO_UID }})."
+      msg:
+        - Running as {{ ansible_facts.user_id }}.
+        - Started by user {{ ansible_env.SUDO_USER }}({{ ansible_env.SUDO_UID }}).
+        - Target user home dir is {{ lookup('env', 'HOME') }}
+        - System release is {{ ansible_distribution_release }}.
 
   - name: Clean unwanted pre-installed packages
     apt:
@@ -149,6 +153,9 @@
  
   - name: Install Streamdeck UI
     include: tasks/streamdeck.yml
+  
+  - name: Install UniFi Controller
+    include: tasks/unifi.yml
 
   - name: Download and Install Portmaster .deb
     apt:
@@ -166,6 +173,9 @@
 
   - name: Install OBS
     include: tasks/obs.yml
+
+  - name: Install AppImage Launcher
+    include: tasks/appimage_launcher.yml
 
   - name: Apt cleanup
     apt:

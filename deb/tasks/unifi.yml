@@ -1,0 +1,20 @@
+- name: Generate password for Unifi Infrastructure
+  set_fact:
+    unifi_mongo_password: "{{ lookup('ansible.builtin.password', '/dev/null') }}"
+
+- name: Setup directory for container configs
+  file:
+    path: "{{ lookup('env', 'HOME') }}/containers/unifi"
+    mode: "0764"
+    state: directory
+    recurse: true
+
+- name: Generate a password
+  copy:
+    dest: "{{ lookup('env', 'HOME') }}/containers/unifi/password.txt"
+    content: "{{ unifi_mongo_password }}"
+
+- name: Checkout Unifi Network Application configuration
+  git:
+    repo: git@github.com:botagar/unifi-network-application.git
+    dest: "{{ lookup('env', 'HOME') }}/containers/unifi"
