@@ -1,11 +1,11 @@
-set_fact:
-  docker_gpg_keyring_path: /etc/apt/trusted.gpg.d/docker.gpg
+- set_fact:
+    docker_gpg_keyring_path: /etc/apt/trusted.gpg.d/docker.gpg
 
 - name: Add Docker Apt signing key
   apt_key:
     url: https://download.docker.com/linux/debian/gpg
     state: present
-    keyring: {{ docker_gpg_keyring_path }}
+    keyring: "{{ docker_gpg_keyring_path }}"
 
 - name: Add Docker repository
   apt_repository:
@@ -35,8 +35,8 @@ set_fact:
 
 - name: Add current user to Docker group
   user:
-    name: {{ ansible_user_id }}
-    uid: {{ ansible_user_gid }}
+    name: "{{ ansible_user_id }}"
+    uid: "{{ ansible_user_gid }}"
     group: docker
 
 - name: Register Docker Daemon

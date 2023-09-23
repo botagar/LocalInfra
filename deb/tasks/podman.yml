@@ -1,0 +1,12 @@
+- name: Install Podman
+  apt:
+    name:
+    - podman
+    - podman-docker
+
+- name: Install Podman Compose
+  become_user: "{{ ansible_env.SUDO_USER }}"
+  pip:
+    name: podman-compose
+
+# Look into installing Podman v4 https://devicetests.com/install-podman-4-ubuntu-22-04

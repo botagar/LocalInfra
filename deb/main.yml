@@ -3,6 +3,8 @@
   hosts: 127.0.0.1
   connection: local
   become: yes
+  vars:
+    container_engine: "{{ container_engine | default('docker') }}"
 
   tasks:
   - name: Debug Diagnostics
@@ -96,19 +98,17 @@
   - name: Install VSCode
     include: tasks/vscode.yml
 
-   #- name: Install Docker
-     #include: tasks/docker.yml
-   # Try Podman Instead (podman-docker)
-  - name: Install Podman
-    apt:
-      name:
-      - podman
-      - podman-docker
+  - name: Announce Selected Container Engine to Install
+    debug:
+      msg: "Installing selected container engine [{{ container_engine }}] from available options [docker, podman]"
 
-  - name: Install Podman Compose
-    become_user: "{{ ansible_env.SUDO_USER }}"
-    pip:
-      name: podman-compose
+  - name: Install Docker
+    include: tasks/docker.yml
+    when: container_engine == "docker"
+
+  - name: Install Podman
+    include: tasks/podman.yml
+    when: container_engine == "podman"
 
   - name: Install NVM
     include: tasks/nvm.yml
