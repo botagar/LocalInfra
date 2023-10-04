@@ -1,3 +1,20 @@
+- set_fact:
+    host_network_device: "{{ ansible_default_ipv4.interface }}"
+    host_network_ifname: "{{ ansible_default_ipv4.alias }}"
+
+- name: Get physical ether interface names
+  shell: nmcli device | awk '$2=="ethernet" {print $1}'
+  register: ansible_physical_ether_ifnames
+
+- name: Display Base Networking Resources
+  debug:
+    msg:
+      - Running as [{{ ansible_env.SUDO_USER }}]
+      - Host IPV4 Network Device [{{ host_network_device }}]
+      - Host IPV4 Network Interface Name [{{ host_network_ifname }}]
+      - Should setup bridge interface? [{{ install_bridge }}]
+      - Device to bridge [{{ ansible_physical_ether_ifnames.stdout_lines.0 }}]
+
 - name: Install KVM
   apt:
     name:
@@ -13,40 +30,46 @@
     enabled: yes
     name: libvirtd
 
-- name: Add current user to kvm group
+- name: Add current user to kvm and libvirt groups
   user:
-    name: {{ ansible_user_id }}
-    uid: {{ ansible_user_gid }}
-    group: kvm
+    name: "{{ ansible_env.SUDO_USER }}"
+    groups:
+      - kvm
+      - libvirt
+    append: yes
 
-- name: Add current user to libvirt group
-  user:
-    name: {{ ansible_user_id }}
-    uid: {{ ansible_user_gid }}
-    group: libvirt
+- name: Announce Setup of Bridge Network
+  debug:
+    msg: Setting up Bridge network br0
+  when: install_bridge
 
-- name: Create network bridge config
-  copy:
-    dest: /etc/netplan/01-netcfg.yaml
-    content: |
-    network:
-      ethernets:
-        enp39s0:
-          dhcp4: false
-          dhcp6: false
-      bridges:
-        br0:
-          interfaces: [enp39s0]
-          dhcp4: false
-          addresses: [192.168.1.162/24]
-          macaddress: 08:00:27:4b:1d:45
-          routes:
-            - to: default
-              via: 192.168.1.1
-              metric: 100
-          nameservers:
-            addresses: [8.8.8.8]
-          parameters:
-            stp: false
-          dhcp6: false
-      version: 2
+- name: Network Bridge
+  nmcli:
+    type: bridge
+    conn_name: br0
+    ifname: br0
+    ip4: 192.168.2.130/16
+    gw4: "192.168.1.1"
+    dns4:
+      - "192.168.1.1"    #Router-Firewall
+      - "208.67.222.222" #OpenDNS
+      - "1.1.1.1"        #Cloudflare
+    state: present
+  when: install_bridge
+
+- name: Bridge to WAN Link
+  nmcli:
+    type: bridge-slave
+    master: br0
+    conn_name: bridge-br0
+    ifname: "{{ ansible_physical_ether_ifnames.stdout_lines.0 }}" #enp39s0
+    state: present
+  when: install_bridge
+
+- name: Bring online br0
+  command: nmcli con up br0
+  when: install_bridge and (host_network_device != "br0")
+
+- name: Bring down Default Network Interface
+  command: nmcli con down {{ host_network_ifname }}
+  when: install_bridge and (host_network_device != "br0")

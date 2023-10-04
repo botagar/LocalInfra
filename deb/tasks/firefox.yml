@@ -1,0 +1,28 @@
+- name: Add FireFox PPA
+  apt_repository:
+    repo: ppa:mozillateam/ppa
+
+- name: Creating apt preferences for FireFox
+  copy:
+    dest: /etc/apt/preferences.d/mozilla-firefox
+    content: |
+      Package: *
+      Pin: release o=LP-PPA-mozillateam
+      Pin-Priority: 1001
+
+      Package: firefox
+      Pin: version 1:1snap1-0ubuntu2
+      Pin-Priority: -1
+
+- name: Install FireFox
+  apt:
+    name: firefox
+    state: latest
+    update_cache: yes
+
+- name: Disable background updates for Snap FireFox
+  lineinfile:
+    state: present
+    create: true
+    path: /etc/apt/apt.conf.d/51unattended-upgrades-firefox
+    line: 'Unattended-Upgrade::Allowed-Origins:: "LP-PPA-mozillateam:${distro_codename}";'

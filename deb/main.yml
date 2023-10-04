@@ -125,16 +125,19 @@
       - deluge-web
       - timeshift # Disk Backup and Restore
 
-  - name: Install firefox
-    snap:
-      name:
-      - firefox
+  - name: Install FireFox
+    include: tasks/firefox.yml
 
   - name: Install Wine
     include: tasks/wine.yml
 
   - name: Install Signal
     include: tasks/signal.yml
+
+  - name: Install KVM
+    include: tasks/kvm.yml
+    vars:
+      install_bridge: yes
 
   - name: Install Snap packages
     snap:
