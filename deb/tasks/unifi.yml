@@ -1,20 +1,38 @@
 - name: Generate password for Unifi Infrastructure
   set_fact:
     unifi_mongo_password: "{{ lookup('ansible.builtin.password', '/dev/null') }}"
+    unifi_net_app_home: "{{ lookup('env', 'HOME') }}/containers/unifi"
 
 - name: Setup directory for container configs
   file:
-    path: "{{ lookup('env', 'HOME') }}/containers/unifi"
-    mode: "0764"
+    owner: "{{ ansible_env.SUDO_USER }}"
+    path: "{{ unifi_net_app_home }}"
     state: directory
     recurse: true
 
-- name: Generate a password
-  copy:
-    dest: "{{ lookup('env', 'HOME') }}/containers/unifi/password.txt"
-    content: "{{ unifi_mongo_password }}"
-
 - name: Checkout Unifi Network Application configuration
+  become_user: "{{ ansible_env.SUDO_USER }}"
   git:
     repo: git@github.com:botagar/unifi-network-application.git
-    dest: "{{ lookup('env', 'HOME') }}/containers/unifi"
+    dest: "{{ unifi_net_app_home }}"
+
+- name: Generate a password
+  copy:
+    dest: "{{ unifi_net_app_home }}/password.txt"
+    content: "{{ unifi_mongo_password }}"
+
+- name: Get list of files
+  find:
+    paths: "{{ unifi_net_app_home }}"
+  register: file_list
+
+- name: Replace password tokens with generated password
+  replace:
+    path: "{{ item.path }}"
+    regexp: '<mongdb_pass>'
+    replace: "{{ unifi_mongo_password }}"
+  with_items: "{{ file_list.files }}"
+
+- name: Prompt instructions on running the Unifi Network Application Stack
+  debug:
+    msg: run "podman compose up -d" to start the Unifi Network Application
