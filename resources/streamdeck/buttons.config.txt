@@ -1,0 +1,9 @@
+ 
+Label: ss rect
+Command: spectacle -rbn
+
+ss win
+spectacle -abn
+
+GIF (peek)
+peek

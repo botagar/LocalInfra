@@ -1,6 +1,36 @@
+# Look to switch to https://github.com/streamdeck-linux-gui/streamdeck-linux-gui as streamdeck-ui seems to have gone abandoned
+
+- name: Install Streamdeck UI dependencies
+  apt:
+    name:
+    - libhidapi-libusb0
+    - pipx
+    state: latest
+
+
 - name: Configure Elgato USB Devices
   command: sh -c 'echo "SUBSYSTEM==\"usb\", ATTRS{idVendor}==\"0fd9\", TAG+=\"uaccess\"" > /etc/udev/rules.d/70-streamdeck.rules'
 
+- name: Trigger rule to detect the USB Device
+  command: udevadm trigger
+
 - name: Install Streamdeck UI
   become_user: "{{ ansible_env.SUDO_USER }}"
-  command: python3 -m pip install streamdeck-ui --user
+  command: python3 -m pipx install streamdeck-linux-gui --user
+
+- name: Create Resource Files Directory
+  file:
+    path: "/home/{{ ansible_env.SUDO_USER }}/.streamdeck"
+    state: directory
+    owner: "{{ ansible_env.SUDO_USER }}"
+    group: plugdev
+    mode: 0750
+    recurse: yes
+
+- name: Copy Resource Files to Home
+  copy:
+    src: ../resources/streamdeck/
+    dest: "/home/{{ ansible_env.SUDO_USER }}/.streamdeck"
+    owner: "{{ ansible_env.SUDO_USER }}"
+    group: plugdev
+    mode: 0754

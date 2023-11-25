@@ -40,11 +40,14 @@
       - software-properties-common
       - apt-transport-https
       - ca-certificates
+      - libcap-ng-utils
       - lsb-release
       - gnupg2
       - wget
       - curl
       - snapd
+      - flatpak
+      # - plasma-workspace-wayland # If running plasma (KDE)
       state: latest
 
   - name: Install basic dev utilities
@@ -94,6 +97,9 @@
 
   - name: Install PipeWire (System Sound)
     include: tasks/pipewire.yml
+
+  - name: Install Rust and Cargo
+    include: tasks/rust.yml
 
   - name: Install VSCode
     include: tasks/vscode.yml
