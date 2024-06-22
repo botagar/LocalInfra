@@ -9,19 +9,19 @@
     state: present
     filename: 'wine'
 
-- name: Install Wine Staging
-  apt:
-    install_recommends: yes
-    update_cache: yes
-    name: 
-      - winehq-staging
-      - winetricks
-
-- name: Install WINE Utility Libraries
-  apt:
-    install_recommends: yes
-    name:
-      - winbind
+# - name: Install Wine Staging
+#   apt:
+#     install_recommends: yes
+#     update_cache: yes
+#     name:
+#       - winehq-staging
+#       - winetricks
+#
+# - name: Install WINE Utility Libraries
+#   apt:
+#     install_recommends: yes
+#     name:
+#       - winbind
 
 - name: Print prompt to run winecfg
   command: echo 'Run winecfg to complete installation'

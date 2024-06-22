@@ -47,7 +47,6 @@
       - curl
       - snapd
       - flatpak
-      # - plasma-workspace-wayland # If running plasma (KDE)
       state: latest
 
   - name: Install basic dev utilities
@@ -71,19 +70,19 @@
       state_brew: present
 
   # NOT idempotent
-  - name: Install PyEnv
-    import_role:
-      name: staticdev.pyenv
-    vars:
-      pyenv_env: 'system'
-      pyenv_global:
-      - "3.11"
-      pyenv_python_versions:
-      - "3.11"
-      - "3.7"
-      pyenv_enable_autocompletion: true
-  
-  # NOT idempotent
+  # Let's rethink this step
+  # - name: Install PyEnv
+  #   import_role:
+  #     name: staticdev.pyenv
+  #   vars:
+  #     pyenv_env: 'system'
+  #     pyenv_global:
+  #     - "3.11"
+  #     pyenv_python_versions:
+  #     - "3.11"
+  #     - "3.7"
+  #     pyenv_enable_autocompletion: true
+
   - name: Install AWS CLI
     include: tasks/aws_cli.yml
     vars:
@@ -122,10 +121,9 @@
   - name: Install Apt packages
     apt:
       name:
-      - nala # Faster Apt Package Manager
+      # - nala # Faster Apt Package Manager
       - net-tools
       - rdesktop
-      - telegram-desktop
       - syncthing
       - deluge
       - deluge-web
@@ -154,6 +152,7 @@
       - slack
       - bpytop
       - chromium
+      - telegram-desktop
 
   - name: Install Universe packages
     apt:
@@ -166,9 +165,9 @@
   - name: Install UniFi Controller
     include: tasks/unifi.yml
 
-  - name: Download and Install Portmaster .deb
-    apt:
-      deb: https://updates.safing.io/latest/linux_amd64/packages/portmaster-installer.deb
+  # - name: Download and Install Portmaster .deb
+  #   apt:
+  #     deb: https://updates.safing.io/latest/linux_amd64/packages/portmaster-installer.deb
   
   - name: Install Private Internet Access VPN
     include: tasks/private_internet_access.yml

@@ -17,6 +17,6 @@
 - name: Setup user profile
   shell: |
     (echo; echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"') >> /home/{{ ansible_env.SUDO_USER }}/.profile
-    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)
+    eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
   args:
     executable: /bin/bash

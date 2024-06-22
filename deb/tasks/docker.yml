@@ -1,50 +1,30 @@
-- set_fact:
-    docker_gpg_keyring_path: /etc/apt/trusted.gpg.d/docker.gpg
+- name: Check if Docker is installed
+  command: docker --version
+  register: docker_check
+  ignore_errors: true
 
-- name: Add Docker Apt signing key
-  apt_key:
-    url: https://download.docker.com/linux/debian/gpg
-    state: present
-    keyring: "{{ docker_gpg_keyring_path }}"
+- name: Install Docker if its missing
+  when:
+    - container_engine == "docker"
+    - docker_check.rc > 0
+  block:
+    - name: Download get-docker.sh script
+      get_url:
+        url: https://get.docker.com
+        dest: /tmp/get-docker.sh
+        mode: 0755
 
-- name: Add Docker repository
-  apt_repository:
-    repo: deb [arch={{ ansible_architecture }} signed-by={{ docker_gpg_keyring_path }}] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable
-    state: present
+    - name: Run get-docker.sh script
+      shell: /tmp/get-docker.sh
+      become: yes
 
-- name: Install Docker packages
-  apt:
-    update_cache: yes
-    upgrade: safe
-    install_recommends: yes
-    name:
-      - docker-ce
-      - docker-ce-cli
-      - containerd.io
-      - docker-compose-plugin
+    - name: Install Docker Rootless dependent packages
+      apt:
+        upgrade: safe
+        install_recommends: yes
+        name:
+          - uidmap
 
-- name: Ensure Docker group exists
-  group:
-    name: docker
-    state: present
-
-- name: Restart Docker Daemon
-  systemd:
-    state: restarted
-    name: docker
-
-- name: Add current user to Docker group
-  user:
-    name: "{{ ansible_user_id }}"
-    uid: "{{ ansible_user_gid }}"
-    group: docker
-
-- name: Register Docker Daemon
-  systemd:
-    enabled: yes
-    name: docker.service
-
-- name: Register Containerd Daemon
-  systemd:
-    enabled: yes
-    name: containerd.service
+    - name: Run dockerd-rootless-setuptool.sh install
+      become_user: "{{ ansible_env.SUDO_USER }}"
+      shell: dockerd-rootless-setuptool.sh install
